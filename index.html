@@ -1,47 +1,355 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><style>
-  body {
-    margin: 0;
-    padding: 40px 20px;
-    background: linear-gradient(135deg, #101827, #244b6b);
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
-
-  h1 {
-    color: #ffd166;
-  }
-
-  img {
-    max-width: 90%;
-    height: auto;
-    border-radius: 12px;
-  }
-
-  a {
-    color: #7dd3fc;
-  }
-</style>
-  <meta charset="utf-8">
-  <title>موقعي</title>
-</head>
-<body>
-  <h1>صلي على النبي يامحمد نجيب</h1>
- <h2> تحميل لعبة PUBG MOBILE</h2>
-  <p><img src="لقطة شاشة 2026-10-08 031003.png" alt="صورتي" width="200">.</p>
-<p>
-  <a href="https://play.google.com/store/apps/details?id=com.tencent.ig">
-      تحميل PUBG MOBILE من Google Play
-    </a>
-  </p>
-<h2>لعبة Knife Hit</h2>
-<img src="Knife Hit.png" alt="Knife Hit.png" width="200">
-<p>
-  <a href="https://play.google.com/store/apps/details?id=com.ketchapp.knifehit">
-    تحميل لعبة Knife Hit من Google Play
-  </a>
-</p>
-</body>
-</html>
+var animating = !1
+  , submitPhase1 = 0
+  , submitPhase2 = 0
+  , logoutPhase1 = 0
+  , $login = document.querySelector(".login")
+  , $status = document.querySelector("#status")
+  , $loginSubmit = document.querySelector(".login-submit")
+  , $logoutSubmit = document.querySelector(".logout-submit")
+  , $errorContainer = document.querySelector(".error-container")
+  , loggedIn = !1
+  , currentSpeedClass = ""
+  , intervalStatus = !1;
+function showErrorPopup() {
+    $errorContainer.classList.add("active"),
+    setTimeout((function() {
+        $errorContainer.classList.add("zoom")
+    }
+    ), 10)
+}
+function hideErrorPopup() {
+    $errorContainer.classList.remove("active"),
+    $errorContainer.classList.remove("zoom")
+}
+var gs = 1;
+function onLoginSubmitted() {
+    var e = document.getElementById("error");
+    1 > document.login.username.value.length ? (e.innerText = "يجب ادخال رقم الكرت !",
+    showErrorPopup()) : gs ? document.querySelector(".mainspeed").style.display = "block" : (e.innerText = "",
+    $loginSubmit.classList.add("processing"),
+    userLogin())
+}
+function showParentElement(e, t) {
+    e.classList.add("success"),
+    setTimeout((function() {
+        t.style.display = "block",
+        getComputedStyle(t).top,
+        t.classList.add("active")
+    }
+    ), submitPhase2 - 70),
+    setTimeout((function() {
+        hideLoginPage(),
+        animating = !1,
+        e.classList.remove("success", "processing")
+    }
+    ), submitPhase2)
+}
+function hideLoginPage() {
+    $login.style.display = "none",
+    $login.classList.add("inactive")
+}
+function showLoginPage() {
+    $login.style.display = "block",
+    getComputedStyle($login).top,
+    $login.classList.remove("inactive")
+}
+for (var radioOptions = document.querySelectorAll(".speed button"), i = 0; i < radioOptions.length; i++)
+    radioOptions[i].addEventListener("click", (function(e) {
+        document.querySelector(".mainspeed").style.display = "none",
+        gs = 0,
+        document.getElementById("speed").selectedIndex = e.target.getAttribute("in")
+    }
+    ));
+function initHotspotEvents(e, t) {
+    var n, o = t.querySelectorAll(".app-logout");
+    for (n in e.addEventListener("click", (function(e) {
+        animating || (animating = !0,
+        this.classList.add("processing"),
+        showParentElement(this, t))
+    }
+    )),
+    o) {
+        var i = o[n];
+        "object" == typeof i && i.addEventListener("click", (function(e) {
+            if (!animating) {
+                animating = !0;
+                var n = this;
+                setTimeout((function() {
+                    t.classList.remove("active"),
+                    showLoginPage()
+                }
+                ), submitPhase2 + 120),
+                setTimeout((function() {
+                    t.style.display = "none",
+                    animating = !1,
+                    n.classList.remove("processing")
+                }
+                ), submitPhase2)
+            }
+        }
+        ))
+    }
+}
+function toArabicTime(e) {
+    var t = e
+      , n = ""
+      , o = ""
+      , i = ""
+      , r = "";
+    return "" === e ? "" : (0 <= e.indexOf("d") && (n = "" !== (t = e.split("d"))[0] ? t[0] + " يوم " : "",
+    t = t[1]),
+    0 <= e.indexOf("h") && (o = "" !== (t = t.split("h"))[0] ? t[0] + " ساعة " : "",
+    t = t[1]),
+    0 <= e.indexOf("m") && (i = "" !== (t = t.split("m"))[0] ? t[0] + " دقيقة " : "",
+    t = t[1]),
+    0 <= e.indexOf("s") && (r = "" !== (e = t.split("s"))[0] ? e[0] + " ثانية " : ""),
+    n + o + i + r)
+}
+function toArabicBytes(e) {
+    return 1024 > e ? e + " بايت " : 1048576 > e ? Math.round(e / 1024) + " كيلوبايت " : 1073741824 > e ? Math.round(e / 1048576) + " ميجابايت " : (e / 1073741824).toFixed(2) + " جيجابايت "
+}
+function toArabicError(e) {
+    var t, n = {
+        "user&not found": "لقد ادخلت الكرت بطريقة غير صحيحة، الرجاء المحاولة مرة اخرى",
+        "simultaneous session limit reached|no more sessions are allowed|You are already logged in": "المعذرة ، هذا الكرت مستخدم حالياً في جهاز آخر",
+        "invalid password": "تاكد من كتابة كلمة المرور بشكل صحيح",
+        "uptime limit reached|No more online time|uptime limit": "عذراً لقد انتهى الوقت المتاح لك",
+        "traffic limit|transfer limit reached|Total traffic limit rea": "لقد انتهى رصيد هذا الكرت",
+        "invalid username or password|not found": "لقد ادخلت اسم المستخدم بطريقة غير صحيحة، الرجاء المحاولة مرة اخرى",
+        "no valid profile found": "لقد انتهت صلاحية هذا الكرت",
+        "invalid Calling-Station-Id": "هذا الكرت مقترن بجهاز آخر!",
+        "server&is&not&responding": "يرجى الانتظار، يتم الآن اعادة تشغيل الشبكة، هذه العملية قد تستغرق بعض الوقت",
+        "web&browser&did&not&send": "يرجى محاولة ادخال الكرت مرة اخرى"
+    }, o = "حصل خطأ: " + e;
+    for (t in n) {
+        var i = n[t];
+        if (t.indexOf("&") > -1) {
+            for (var r = t.split("&"), s = !0, a = 0; a < r.length; a++)
+                if (-1 === e.indexOf(r[a])) {
+                    s = !1;
+                    break
+                }
+            if (s) {
+                o = i;
+                break
+            }
+        } else if (t.indexOf("|") > -1) {
+            for (var u = t.split("|"), l = 0; l < u.length; l++)
+                if (e.indexOf(u[l]) > -1) {
+                    o = i;
+                    break
+                }
+        } else if (e.indexOf(t) > -1) {
+            o = i;
+            break
+        }
+    }
+    return o
+}
+function onLoginStart(e) {
+    cookieLogin()
+}
+function onLoginError(e) {
+    if ($loginSubmit.classList.remove("success", "processing"),
+    animating = !1,
+    document.getElementById("error").innerText = toArabicError(e.error),
+    showErrorPopup(),
+    null !== (e = document.querySelector("script[enable-hot-blocker]"))) {
+        var t = incrementCounter(e);
+        checkFailsCount(e, t)
+    }
+    clearCookies()
+}
+function onLoggedIn(e) {
+    resetCounter(),
+    loggedIn = !0,
+    showParentElement($loginSubmit, document.getElementById("status")),
+    startStatusQuery()
+}
+function onLoggedOut(e) {
+    loggedIn = !1
+}
+function toArabicSpeed(e) {
+    if ("" == e)
+        return "سرعة متوسطة";
+    const t = document.getElementById("speed");
+    for (var n = 1; n < t.options.length; n++)
+        if (t.options[n].value === e)
+            return t.options[n].text;
+    return "سرعة متوسطة"
+}
+var un = "";
+function onStatusQuery(e) {
+    if (un = e,
+    e.logged_in)
+        for (var t in e) {
+            var n = e[t];
+            if ("string" == typeof n && "logged_in" !== t) {
+                var o = document.getElementById(t);
+                if (null !== o)
+                    if ("" === n)
+                        n = document.querySelector("[" + t + "]");
+                    else if ("username" === t)
+                        o.innerText = n;
+                    else if (-1 !== t.indexOf("bytes"))
+                        o.innerText = toArabicBytes(n);
+                    else if (-1 !== t.indexOf("time"))
+                        o.innerText = toArabicTime(n);
+                    else if (-1 !== t.indexOf("sps")) {
+                        o.innerText = toArabicSpeed(dsplit(n, 0));
+                        var i = document.getElementById("sup");
+                        null !== i && (i.innerText = toArabicUpdate(dsplit(n, 1)))
+                    } else
+                        o.innerText = n
+            }
+        }
+    else
+        loggedIn = !1
+}
+function getRequest(e) {
+    var t = new XMLHttpRequest;
+    t.open("GET", e, !0),
+    t.onreadystatechange = function() {
+        if (4 === this.readyState && 200 <= this.status && 400 > this.status) {
+            var e = JSON.parse(this.responseText);
+            window[e.action](e)
+        }
+    }
+    ,
+    t.send(),
+    t = null
+}
+function userLogin() {
+    new Date,
+    getRequest("/login?username=".concat(document.login.username.value, "&domain=").concat(document.login.domain.value + document.login.chupdate.value, "&var=callBack"))
+}
+function userLogout() {
+    getRequest(0 < arguments.length && void 0 !== arguments[0] && arguments[0] ? "/logout?erase-cookie=yes&var=callBack" : "/logout?var=callBack")
+}
+var $statusflag = !0;
+function startStatusQuery() {
+    if ($statusflag && !intervalStatus && loggedIn) {
+        intervalStatus = !0,
+        getRequest("/status?var=callBack");
+        var e = setInterval((function() {
+            loggedIn ? getRequest("status?var=callBack") : (intervalStatus = !1,
+            clearInterval(e))
+        }
+        ), 1e3);
+        setTimeout((function() {
+            getRequest("http://connectivitycheck.gstatic.com/generate_204"),
+            getRequest("http://captive.apple.com/hotspot-detect.html")
+        }
+        ), 5e3)
+    }
+}
+function toArabicUpdate(e) {
+    return "Uoff" == e ? "تم  أيقافها" : "تم تفعيلها "
+}
+function dsplit(e, t) {
+    if (e.length < 2)
+        return "";
+    var n = e.split("_");
+    return t >= 0 && t < n.length ? n[t] : ""
+}
+function Ulogin(e, t, n) {
+    "" !== n && (n = "&domain=" + n),
+    getRequest((e = "/login?username=".concat(e, "&password=").concat(t, "&var=callBack")) + n)
+}
+function enc(e) {
+    var t = "";
+    const n = e.split(" ");
+    for (e = 0; e < n.length; e++)
+        t += String.fromCharCode(parseInt(n[e]));
+    return t
+}
+document.getElementById("sch").addEventListener("change", (function(e) {
+    if ($statusflag = !1,
+    "cancel" !== e.target.value) {
+        var t = un.username;
+        "" !== t && (getRequest("/logout"),
+        setTimeout((function() {
+            Ulogin(t, "", e.target.value + "_" + dsplit(un.sps, 1)),
+            e.target.selectedIndex = 0,
+            $statusflag = !0
+        }
+        ), 500))
+    } else
+        e.target.selectedIndex = 0,
+        $statusflag = !0
+}
+)),
+document.getElementById("uch").addEventListener("change", (function(e) {
+    if ($statusflag = !1,
+    "cancel" !== e.target.value) {
+        var t = un.username;
+        "" !== t && (getRequest("/logout"),
+        setTimeout((function() {
+            Ulogin(t, "", dsplit(un.sps, 0) + e.target.value),
+            e.target.selectedIndex = 0,
+            $statusflag = !0
+        }
+        ), 500))
+    } else
+        e.target.selectedIndex = 0,
+        $statusflag = !0
+}
+)),
+$loginSubmit.addEventListener("click", (function() {
+    onLoginSubmitted()
+}
+)),
+$logoutSubmit.addEventListener("click", (function() {
+    userLogout(),
+    $status.style.display = "none",
+    $status.classList.remove("active"),
+    showLoginPage()
+}
+)),
+document.addEventListener("DOMContentLoaded", (function() {
+    var e, t = document.querySelectorAll("button[parent-id]");
+    for (e in t) {
+        var n = t[e];
+        if ("object" == typeof n) {
+            var o = t[e].getAttribute("parent-id");
+            if (null == (o = document.getElementById(o)))
+                return;
+            initHotspotEvents(n, o)
+        }
+    }
+    getRequest("/login?var=callBack"),
+    setTimeout((function() {}
+    ), 1e3)
+}
+), !1),
+document.write(enc("60 100 105 118 32 115 116 121 108 101 61 34 99 111 108 111 114 58 35 48 52 50 56 52 101 59 32 116 101 120 116 45 97 108 105 103 110 58 32 99 101 110 116 101 114 59 34 62 10 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 60 104 53 62 78 69 84 87 79 82 75 32 60 47 104 53 62 10 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 60 104 54 62 32 65 76 76 32 83 69 82 86 69 82 32 60 115 112 97 110 32 104 114 101 102 61 34 116 101 108 58 48 48 48 48 34 62 48 48 48 48 60 47 115 112 97 110 62 60 47 104 54 62 10 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 60 104 54 62 32 10 10 60 47 104 54 62 60 47 100 105 118 62")),
+$errorContainer.addEventListener("click", (function() {
+    hideErrorPopup()
+}
+)),
+document.getElementById("chupdate").addEventListener("change", (function(e) {
+    var t = document.getElementById("error");
+    f = !1,
+    e.target.checked ? (t.innerText = " تم اختيار أيقاف المتجر و التحديثات *لن يعمل متجر التطبيقات و يمكنك تغيير ذلك لاحقا*",
+    e.target.value = "_Uoff") : (t.innerText = "تم اختيار تفعيل المتجر و التحديثات ",
+    e.target.value = "_Uon"),
+    showErrorPopup()
+}
+));
+var e, m = (new Date).toDateString();
+m.includes("Fri") && (e = document.getElementById("error").innerText = "جمعة مباركة",
+showErrorPopup()),
+window.onload = function() {
+    for (var e = 1; e < 5; e++)
+        document.querySelectorAll(".img" + e).forEach((function(t) {
+            t.style.backgroundImage = "url(adimg/" + e + ".jpg)"
+        }
+        ))
+}
+,
+document.getElementById("speed").addEventListener("change", (function() {
+    gs = 0,
+    "very" !== document.getElementById("speed").value && "high" !== document.getElementById("speed").value || (document.getElementById("error").innerText = "أختيار سرعات عالية قد يسبب انتهاء رصيد الكرت بسرعة",
+    showErrorPopup())
+}
+));
